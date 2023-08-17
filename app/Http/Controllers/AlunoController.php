@@ -65,9 +65,10 @@ class AlunoController extends Controller
     /**
      * Carrega o formulário para edição.
      */
-    public function edit(Aluno $aluno)
+    public function edit($id)
     {
-        //
+        $aluno = Aluno::find($id);
+        return view('aluno.form')->with(['aluno' => $aluno]);
     }
 
     /**
@@ -75,14 +76,48 @@ class AlunoController extends Controller
      */
     public function update(Request $request, Aluno $aluno)
     {
-        //
+
+        $request->validate([
+            'nome' => 'required|max:100',
+            'cpf' => 'required|max:14'
+        ], [
+            ' nome.required' => "O :attribute é obrigatório",
+            ' nome.max' => "Só é permitido 100 caracteres no :attribute! ",
+            ' cpf.required' => "O :attribute é obrigatório",
+            ' cpf.max' => "Só é permitido 11 caracteres no :attribute! ",
+        ]);
+        $dados = [
+            'nome' => $request->nome,
+            'data_nascimento' => $request->data_nascimento,
+            'cpf' => $request->cpf,
+            'email' => $request->email,
+            'telefone' => $request->telefone
+        ];
+
+        Aluno::updateOrCreate(['id' => $request->id], $dados);
+
+        return redirect('aluno')->with('success', "Atualizado com sucesso!");
     }
 
     /**
      * Remove o registro do banco de dados.
      */
-    public function destroy(Aluno $aluno)
+    public function destroy($id)
     {
-        //
+        $aluno = Aluno::find($id);
+        $aluno->delete();
+        return redirect('aluno')->with('success', "Removido com sucesso!");
+    }
+    public function search(Request $request)
+    {
+
+        if (!empty($request->valor)) {
+
+            $alunos = Aluno::where($request->tipo, 'like', "%" . $request->valor . "%")->get();
+        } else {
+            $alunos = Aluno::all();
+        }
+        return view('aluno.list')->with(['alunos' => $alunos]);
+
     }
 }
