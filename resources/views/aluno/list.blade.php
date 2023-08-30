@@ -1,14 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
-</head>
-
-<body>
+@extends('base.app')
+@section('titulo', 'Listagem de alunos')
+@section('content')
     <h3>Listagem de alunos</h3>
     <form action="{{ route('aluno.search') }}" method="POST">
         @csrf
@@ -27,27 +19,32 @@
     <table class="table table-hover">
         <tr>
             <th scope="col">#</th>
+            <th scope="col">Imagem</th>
             <th scope="col">Nome</th>
             <th scope="col">Data de nascimento</th>
             <th scope="col">CPF</th>
             <th scope="col">E-mail</th>
             <th scope="col">Telefone</th>
+            <th scope="col">Categoria</th>
             <th scope="col">Ações</th>
         </tr>
         @foreach ($alunos as $item)
+            @php
+                $nome_imagem = !empty($item->imagem) ? $item->imagem : 'sem_imagem.jpg';
+            @endphp
             <tr>
+                <td><img src="/storage/{{ $nome_imagem }}" width="100px" alt="imagem"></td>
                 <td>{{ $item->id }}</td>
                 <td>{{ $item->nome }}</td>
                 <td>{{ $item->data_nascimento }}</td>
                 <td>{{ $item->email }}</td>
                 <td>{{ $item->cpf }}</td>
                 <td>{{ $item->telefone }}</td>
+                <td>{{ $item->categoria->nome ?? '' }}</td>
                 <td><a href="{{ route('aluno.edit', $item->id) }}">Editar</a></td>
                 <td><a href="{{ route('aluno.destroy', $item->id) }}"
                         onclick="return confirm('Deseja excluir?')">Excluir</a>
                 </td>
             </tr>
         @endforeach
-</body>
-
-</html>
+    @endsection

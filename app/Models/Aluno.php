@@ -10,9 +10,15 @@ class Aluno extends Model
     use HasFactory;
     protected $table = 'aluno';
 
-    protected $fillable = ['nome', 'data_nascimento', 'cpf', 'email', 'telefone'];
+    protected $fillable = ['nome', 'data_nascimento', 'cpf', 'email', 'telefone', 'categoria_aluno_id', 'imagem'];
 
-    protected $cast = [
-        'data_nascimento' => 'date'
+    protected $casts = [
+        'data_nascimento' => 'date',
+        'categoria_aluno_id' => "integer"
     ];
+
+    public function categoria()
+    {
+        return $this->belongsTo(CategoriaAluno::class, 'categoria_aluno_id', 'id');
+    }
 }
